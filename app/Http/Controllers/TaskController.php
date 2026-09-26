@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Models\Task;
 
 class TaskController extends Controller
 {
     // Show all tasks
     public function index()
     {
-        $tasks = Task::all();
+        $tasks = Task::latest()->get();
 
         return view('tasks.index', compact('tasks'));
     }
@@ -32,7 +32,7 @@ class TaskController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect('/');
+        return redirect()->back();
     }
 
     // Show edit page
@@ -58,7 +58,7 @@ class TaskController extends Controller
             'due_date' => $request->due_date,
         ]);
 
-        return redirect('/');
+        return redirect()->back();
     }
 
     // Delete task
@@ -66,6 +66,6 @@ class TaskController extends Controller
     {
         $task->delete();
 
-        return redirect('/');
+        return redirect()->back();
     }
 }
