@@ -15,24 +15,23 @@ class TaskController extends Controller
         return view('tasks.index', compact('tasks'));
     }
 
-    // Add a new task
+    // Add task
     public function store(Request $request)
     {
-        $request->validate([
-            'task_name' => 'required',
-            'description' => 'nullable',
-            'status' => 'required',
+        $validated = $request->validate([
+            'task_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:Pending,Completed',
             'due_date' => 'nullable|date',
         ]);
 
-        Task::create([
-            'task_name' => $request->task_name,
-            'description' => $request->description,
-            'status' => $request->status,
-            'due_date' => $request->due_date,
-        ]);
+        $task = Task::create($validated);
 
-        return redirect()->back();
+        return response()->json([
+            'success' => true,
+            'message' => 'Task added successfully!',
+            'task' => $task,
+        ], 201);
     }
 
     // Show edit page
@@ -44,28 +43,33 @@ class TaskController extends Controller
     // Update task
     public function update(Request $request, Task $task)
     {
-        $request->validate([
-            'task_name' => 'required',
-            'description' => 'nullable',
-            'status' => 'required',
+        $validated = $request->validate([
+            'task_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:Pending,Completed',
             'due_date' => 'nullable|date',
         ]);
 
-        $task->update([
-            'task_name' => $request->task_name,
-            'description' => $request->description,
-            'status' => $request->status,
-            'due_date' => $request->due_date,
-        ]);
+        $task->update($validated);
 
-        return redirect()->back();
+        return response()->json([
+            'success' => true,
+            'message' => 'Task updated successfully!',
+            'task' => $task->fresh(),
+        ]);
     }
 
     // Delete task
     public function destroy(Task $task)
     {
+        $taskId = $task->id;
+
         $task->delete();
 
-        return redirect()->back();
+        return response()->json([
+            'success' => true,
+            'message' => 'Task deleted successfully!',
+            'task_id' => $taskId,
+        ]);
     }
 }

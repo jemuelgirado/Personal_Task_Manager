@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="csrf-token"
+        content="{{ csrf_token() }}"
+    >
 
     <title>Edit Task - Personal Task Manager</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -20,7 +32,6 @@
             min-height: 100vh;
         }
 
-        /* HEADER */
         .header {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
             color: white;
@@ -42,19 +53,17 @@
             font-size: 15px;
         }
 
-        /* CONTAINER */
         .container {
             max-width: 700px;
             margin: 35px auto;
             padding: 0 20px;
         }
 
-        /* CARD */
         .card {
             background: white;
             padding: 30px;
             border-radius: 18px;
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .08);
             border: 1px solid #e2e8f0;
         }
 
@@ -70,17 +79,40 @@
             margin-bottom: 25px;
         }
 
-        /* FORM */
+        .message {
+            padding: 13px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         label {
             display: block;
             font-size: 14px;
             font-weight: 600;
             color: #334155;
             margin-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
         }
 
         input,
@@ -94,15 +126,6 @@
             background: #f8fafc;
             color: #1e293b;
             outline: none;
-            transition: 0.2s;
-        }
-
-        input:focus,
-        textarea:focus,
-        select:focus {
-            border-color: #6366f1;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
         }
 
         textarea {
@@ -110,14 +133,6 @@
             resize: vertical;
         }
 
-        /* ERRORS */
-        .error {
-            color: #dc2626;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        /* BUTTONS */
         .buttons {
             display: flex;
             gap: 10px;
@@ -132,7 +147,6 @@
             font-weight: 600;
             text-decoration: none;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .update-button {
@@ -142,9 +156,9 @@
             flex: 1;
         }
 
-        .update-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.25);
+        .update-button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
         }
 
         .cancel-button {
@@ -154,12 +168,8 @@
             text-align: center;
         }
 
-        .cancel-button:hover {
-            background: #e2e8f0;
-        }
-
-        /* MOBILE */
         @media (max-width: 600px) {
+
             .header {
                 padding: 30px 20px;
             }
@@ -186,131 +196,289 @@
                 width: 100%;
             }
         }
+
     </style>
+
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="header-content">
-            <h1>✏️ Edit Task</h1>
-            <p>Update your task information and keep your work organized.</p>
-        </div>
-    </div>
+<div class="header">
 
-    <!-- MAIN CONTENT -->
-    <div class="container">
+    <div class="header-content">
 
-        <div class="card">
+        <h1>✏️ Edit Task</h1>
 
-            <h2>Update Task</h2>
-
-            <p class="card-description">
-                Change the details of your task below.
-            </p>
-
-            <form action="/tasks/{{ $task->id }}" method="POST">
-
-                @csrf
-                @method('PUT')
-
-                <!-- TASK NAME -->
-                <div class="form-group">
-                    <label for="task_name">Task Name</label>
-
-                    <input
-                        type="text"
-                        id="task_name"
-                        name="task_name"
-                        value="{{ old('task_name', $task->task_name) }}"
-                        placeholder="Enter task name"
-                        required
-                    >
-
-                    @error('task_name')
-                        <p class="error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- DESCRIPTION -->
-                <div class="form-group">
-                    <label for="description">Description</label>
-
-                    <textarea
-                        id="description"
-                        name="description"
-                        placeholder="Enter task details"
-                    >{{ old('description', $task->description) }}</textarea>
-
-                    @error('description')
-                        <p class="error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- STATUS -->
-                <div class="form-group">
-                    <label for="status">Status</label>
-
-                    <select id="status" name="status">
-
-                        <option
-                            value="Pending"
-                            {{ old('status', $task->status) == 'Pending' ? 'selected' : '' }}>
-                            Pending
-                        </option>
-
-                        <option
-                            value="Completed"
-                            {{ old('status', $task->status) == 'Completed' ? 'selected' : '' }}>
-                            Completed
-                        </option>
-
-                    </select>
-
-                    @error('status')
-                        <p class="error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- DUE DATE -->
-                <div class="form-group">
-                    <label for="due_date">Due Date</label>
-
-                    <input
-                        type="date"
-                        id="due_date"
-                        name="due_date"
-                        value="{{ old('due_date', $task->due_date) }}"
-                    >
-
-                    @error('due_date')
-                        <p class="error">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- BUTTONS -->
-                <div class="buttons">
-
-                    <button
-                        type="submit"
-                        class="update-button">
-                        ✓ Update Task
-                    </button>
-
-                    <a
-                        href="/"
-                        class="cancel-button">
-                        Cancel
-                    </a>
-
-                </div>
-
-            </form>
-
-        </div>
+        <p>
+            Update your task information and keep your work organized.
+        </p>
 
     </div>
+
+</div>
+
+
+<div class="container">
+
+    <div class="card">
+
+        <h2>Update Task</h2>
+
+        <p class="card-description">
+            Change the details of your task below.
+        </p>
+
+
+        <div
+            id="message"
+            class="message hidden"
+        ></div>
+
+
+        <form id="editTaskForm">
+
+            @csrf
+
+            <div class="form-group">
+
+                <label for="task_name">
+                    Task Name
+                </label>
+
+                <input
+                    type="text"
+                    id="task_name"
+                    name="task_name"
+                    value="{{ $task->task_name }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                >{{ $task->description }}</textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="status">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    required
+                >
+
+                    <option
+                        value="Pending"
+                        {{ $task->status === 'Pending' ? 'selected' : '' }}
+                    >
+                        Pending
+                    </option>
+
+                    <option
+                        value="Completed"
+                        {{ $task->status === 'Completed' ? 'selected' : '' }}
+                    >
+                        Completed
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="due_date">
+                    Due Date
+                </label>
+
+                <input
+                    type="date"
+                    id="due_date"
+                    name="due_date"
+                    value="{{ $task->due_date }}"
+                >
+
+            </div>
+
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="update-button"
+                    id="updateButton"
+                >
+                    ✓ Update Task
+                </button>
+
+                <a
+                    href="{{ route('tasks.index') }}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const form =
+        document.getElementById('editTaskForm');
+
+    const button =
+        document.getElementById('updateButton');
+
+    const message =
+        document.getElementById('message');
+
+    const csrfToken =
+        document
+            .querySelector('meta[name="csrf-token"]')
+            .getAttribute('content');
+
+
+    function showMessage(text, type) {
+
+        message.textContent = text;
+
+        message.className =
+            'message ' + type;
+
+    }
+
+
+    form.addEventListener('submit', async function(event) {
+
+        event.preventDefault();
+
+
+        button.disabled = true;
+
+        button.textContent = 'Updating...';
+
+
+        const formData =
+            new FormData(form);
+
+
+        try {
+
+            const response = await fetch(
+                '/tasks/{{ $task->id }}',
+                {
+
+                    method: 'POST',
+
+                    headers: {
+
+                        'Accept': 'application/json',
+
+                        'X-Requested-With':
+                            'XMLHttpRequest',
+
+                        'X-CSRF-TOKEN':
+                            csrfToken
+
+                    },
+
+                    body: (() => {
+
+                        formData.append('_method', 'PUT');
+
+                        return formData;
+
+                    })()
+
+                }
+            );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                if (data.errors) {
+
+                    throw new Error(
+                        Object.values(data.errors)
+                            .flat()
+                            .join(', ')
+                    );
+
+                }
+
+                throw new Error(
+                    data.message ||
+                    'Failed to update task.'
+                );
+
+            }
+
+
+            showMessage(
+                '✓ Task updated successfully!',
+                'success'
+            );
+
+
+            /*
+             * Go back to the task list after
+             * Laravel successfully updates it.
+             */
+
+            setTimeout(function() {
+
+                window.location.href = '/';
+
+            }, 500);
+
+
+        } catch (error) {
+
+            console.error(
+                'Update error:',
+                error
+            );
+
+            showMessage(
+                'Error: ' + error.message,
+                'error'
+            );
+
+            button.disabled = false;
+
+            button.textContent = '✓ Update Task';
+
+        }
+
+    });
+
+</script>
 
 </body>
 </html>
