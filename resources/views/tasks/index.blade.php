@@ -6,14 +6,6 @@
 
     <title>Personal Task Manager</title>
 
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Personal Task Manager</title>
-
     <style>
         * {
             box-sizing: border-box;
@@ -72,7 +64,7 @@
         }
 
         /* =========================
-           DASHBOARD STATS
+           STATISTICS
         ========================= */
 
         .stats {
@@ -103,7 +95,7 @@
         }
 
         /* =========================
-           FORM CARD
+           FORM
         ========================= */
 
         .form-card {
@@ -171,6 +163,10 @@
             min-height: 100px;
             resize: vertical;
         }
+
+        /* =========================
+           ADD BUTTON
+        ========================= */
 
         .add-button {
             margin-top: 20px;
@@ -284,7 +280,7 @@
         }
 
         /* =========================
-           ACTIONS
+           ACTION BUTTONS
         ========================= */
 
         .actions {
@@ -406,7 +402,9 @@
 
 <body>
 
-    <!-- HEADER -->
+    <!-- =========================
+         HEADER
+    ========================= -->
 
     <header class="header">
 
@@ -429,21 +427,36 @@
     </header>
 
 
-    <!-- MAIN -->
+    <!-- =========================
+         MAIN CONTENT
+    ========================= -->
 
     <main class="container">
 
 
-        <!-- DASHBOARD STATISTICS -->
+        <!-- =========================
+             DASHBOARD STATISTICS
+        ========================= -->
 
         @php
+
             $totalTasks = $tasks->count();
-            $pendingTasks = $tasks->where('status', 'Pending')->count();
-            $completedTasks = $tasks->where('status', 'Completed')->count();
+
+            $pendingTasks = $tasks
+                ->where('status', 'Pending')
+                ->count();
+
+            $completedTasks = $tasks
+                ->where('status', 'Completed')
+                ->count();
+
         @endphp
 
 
         <section class="stats">
+
+
+            <!-- TOTAL -->
 
             <div class="stat-card">
 
@@ -458,6 +471,8 @@
             </div>
 
 
+            <!-- PENDING -->
+
             <div class="stat-card">
 
                 <div class="stat-title">
@@ -471,6 +486,8 @@
             </div>
 
 
+            <!-- COMPLETED -->
+
             <div class="stat-card">
 
                 <div class="stat-title">
@@ -483,10 +500,13 @@
 
             </div>
 
+
         </section>
 
 
-        <!-- ADD TASK -->
+        <!-- =========================
+             ADD TASK FORM
+        ========================= -->
 
         <section class="form-card">
 
@@ -502,6 +522,7 @@
             <form action="/tasks" method="POST">
 
                 @csrf
+
 
                 <div class="form-grid">
 
@@ -537,297 +558,6 @@
                             id="description"
                             name="description"
                             placeholder="Describe what you need to do..."
-                        ></textarea>
-
-                    </div>
-
-
-                    <!-- STATUS -->
-
-                    <div>
-
-                        <label for="status">
-                            Status
-                        </label>
-
-                        <select id="status" name="status">
-
-                            <option value="Pending">
-                                Pending
-                            </option>
-
-                            <option value="Completed">
-                                Completed
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <!-- DUE DATE -->
-
-                    <div>
-
-                        <label for="due_date">
-                            Due Date
-                        </label>
-
-                        <input
-                            type="date"
-                            id="due_date"
-                            name="due_date"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    class="add-button"
-                    type="submit"
-                >
-                    + Add Task
-                </button>
-
-            </form>
-
-        </section>
-
-
-        <!-- TASK HEADER -->
-
-        <div class="tasks-header">
-
-            <h2>
-                My Tasks
-            </h2>
-
-            <span class="task-count">
-                {{ $totalTasks }} {{ $totalTasks == 1 ? 'Task' : 'Tasks' }}
-            </span>
-
-        </div>
-
-
-        <!-- TASKS -->
-
-        @if ($tasks->count() > 0)
-
-            <div class="task-grid">
-
-                @foreach ($tasks as $task)
-
-                    <div class="task-card">
-
-
-                        <!-- TASK NAME -->
-
-                        <h3>
-                            {{ $task->task_name }}
-                        </h3>
-
-
-                        <!-- DESCRIPTION -->
-
-                        <p class="description">
-
-                            {{ $task->description ?: 'No description provided.' }}
-
-                        </p>
-
-
-                        <!-- STATUS -->
-
-                        @if ($task->status == 'Completed')
-
-                            <span class="status completed">
-                                ✓ Completed
-                            </span>
-
-                        @else
-
-                            <span class="status">
-                                ◷ Pending
-                            </span>
-
-                        @endif
-
-
-                        <!-- DUE DATE -->
-
-                        <p class="due-date">
-
-                            📅
-
-                            <strong>
-                                Due:
-                            </strong>
-
-                            {{ $task->due_date ?? 'No due date' }}
-
-                        </p>
-
-
-                        <!-- BUTTONS -->
-
-                        <div class="actions">
-
-
-                            <!-- EDIT -->
-
-                            <a
-                                class="edit-button"
-                                href="/tasks/{{ $task->id }}/edit"
-                            >
-                                ✎ Edit
-                            </a>
-
-
-                            <!-- DELETE -->
-
-                            <form
-                                action="/tasks/{{ $task->id }}"
-                                method="POST"
-                            >
-
-                                @csrf
-
-                                @method('DELETE')
-
-                                <button
-                                    class="delete-button"
-                                    type="submit"
-                                >
-                                    Delete
-                                </button>
-
-                            </form>
-
-
-                        </div>
-
-                    </div>
-
-                @endforeach
-
-            </div>
-
-        @else
-
-            <!-- EMPTY -->
-
-            <div class="empty">
-
-                <div class="empty-icon">
-                    📝
-                </div>
-
-                <h3>
-                    No tasks yet
-                </h3>
-
-                <p>
-                    Create your first task using the form above.
-                </p>
-
-            </div>
-
-        @endif
-
-    </main>
-
-
-    <!-- FOOTER -->
-
-    <footer class="footer">
-
-        Personal Task Manager • Laravel Project
-
-    </footer>
-
-</body>
-</html>
-</head>
-
-<body>
-
-    <!-- HEADER -->
-
-    <div class="header">
-
-        <div class="header-content">
-
-            <div>
-                <h1>Personal Task Manager</h1>
-
-                <p>
-                    Stay organized. Stay productive.
-                </p>
-            </div>
-
-            <div class="header-icon">
-                ✓
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- MAIN CONTENT -->
-
-    <div class="container">
-
-
-        <!-- ADD TASK FORM -->
-
-        <div class="form-card">
-
-            <h2>➕ Add New Task</h2>
-
-            <form action="/tasks" method="POST">
-
-                @csrf
-                <button class="add-button" type="submit">
-    ➕ Add Task
-</button>
-
-                <div class="form-grid">
-
-
-                    <!-- TASK NAME -->
-
-                    <div class="full">
-
-                        <label for="task_name">
-                            Task Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="task_name"
-                            name="task_name"
-                            placeholder="Enter task name"
-                            required
-                        >
-
-                    </div>
-
-
-                    <!-- DESCRIPTION -->
-
-                    <div class="full">
-
-                        <label for="description">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="description"
-                            name="description"
-                            placeholder="Enter task details"
                         ></textarea>
 
                     </div>
@@ -879,21 +609,24 @@
                 </div>
 
 
-                <!-- SUBMIT BUTTON -->
+                <!-- ADD BUTTON -->
 
                 <button
                     class="add-button"
                     type="submit"
                 >
-                    ➕ Add Task
+                    + Add Task
                 </button>
+
 
             </form>
 
-        </div>
+        </section>
 
 
-        <!-- TASK HEADER -->
+        <!-- =========================
+             TASK HEADER
+        ========================= -->
 
         <div class="tasks-header">
 
@@ -902,19 +635,28 @@
             </h2>
 
             <span class="task-count">
-                {{ $tasks->count() }} Tasks
+
+                {{ $totalTasks }}
+
+                {{ $totalTasks == 1 ? 'Task' : 'Tasks' }}
+
             </span>
 
         </div>
 
 
-        <!-- TASK LIST -->
+        <!-- =========================
+             TASK LIST
+        ========================= -->
 
         @if ($tasks->count() > 0)
 
+
             <div class="task-grid">
 
+
                 @foreach ($tasks as $task)
+
 
                     <div class="task-card">
 
@@ -967,12 +709,14 @@
                         </p>
 
 
-                        <!-- ACTION BUTTONS -->
+                        <!-- =========================
+                             ACTION BUTTONS
+                        ========================= -->
 
                         <div class="actions">
 
 
-                            <!-- EDIT -->
+                            <!-- EDIT BUTTON -->
 
                             <a
                                 class="edit-button"
@@ -982,7 +726,7 @@
                             </a>
 
 
-                            <!-- DELETE -->
+                            <!-- DELETE BUTTON -->
 
                             <form
                                 action="/tasks/{{ $task->id }}"
@@ -996,6 +740,7 @@
                                 <button
                                     class="delete-button"
                                     type="submit"
+                                    onclick="return confirm('Are you sure you want to delete this task?')"
                                 >
                                     🗑️ Delete
                                 </button>
@@ -1005,21 +750,31 @@
 
                         </div>
 
+
                     </div>
+
 
                 @endforeach
 
+
             </div>
+
 
         @else
 
 
-            <!-- NO TASKS -->
+            <!-- =========================
+                 NO TASKS
+            ========================= -->
 
             <div class="empty">
 
+                <div class="empty-icon">
+                    📝
+                </div>
+
                 <h3>
-                    No tasks yet.
+                    No tasks yet
                 </h3>
 
                 <p>
@@ -1028,19 +783,22 @@
 
             </div>
 
+
         @endif
 
 
-    </div>
+    </main>
 
 
-    <!-- FOOTER -->
+    <!-- =========================
+         FOOTER
+    ========================= -->
 
-    <div class="footer">
+    <footer class="footer">
 
         Personal Task Manager • Built with Laravel
 
-    </div>
+    </footer>
 
 
 </body>
