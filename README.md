@@ -2,15 +2,13 @@
 
 ## Project Information
 
-| Information | Details |
-|---|---|
-| **Project Code** | WST21-PM-2026-SF |
-| **Student Name** | Jemuel Girado |
-| **Course & Year** | BSIT - 1st Year |
-| **Database Used** | SQLite |
-| **Framework** | Laravel |
+**Project Code:** WST21-PM-2026-SF
 
----
+**Student Name:** Jemuel Girado
+
+**Course & Year:** BSIT - 2nd Year
+
+**Database Used:** SQLite
 
 ## Features
 
