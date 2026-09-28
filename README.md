@@ -6,7 +6,7 @@
 
 **Student Name:** Jemuel Girado
 
-**Course & Year:** BSIT - 2st Year
+**Course & Year:** BSIT - 2nd Year
 
 **Database Used:** SQLite
 
